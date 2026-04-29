@@ -5,95 +5,95 @@ import banco
 def Id():
     Varcontrole = 1
     if entryId.get() == "":
-        messagebox.showinfo(title = "ERRO", message = "Erro ao atualizar")
-        Varcontrole = 0
-        return Varcontrole
+        messagebox.showinfo(title = "ERROR", message = "Error loading")
+        Varcontrol = 0
+        return Varcontrol
     try:
-        Varcontrole = entryId.get()
-        return Varcontrole
+        Varcontrol = entryId.get()
+        return Varcontrol
     except:
-        messagebox.showinfo(title = "ERRO", message = "Erro ao atualizar")
-        Varcontrole = 0
-        return Varcontrole
+        messagebox.showinfo(title = "ERROR", message = "Error loading")
+        Varcontrol = 0
+        return Varcontrol
     
-def Nome():
-    if entryNome.get()=="":
-        messagebox.showinfo(title = "ERRO", message = "Digite nome para atualizar")
+def Name():
+    if entryName.get()=="":
+        messagebox.showinfo(title = "ERROR", message = "Failure loading Name")
         return
     try:
         resId = Id()
         if resId == 0:
             return
-        vquery = "UPDATE tb_nomes SET nome = " + "\'" + entryNome.get() + "\' WHERE id=" + resId
+        vquery = "UPDATE rabbits SET name = " + "\'" + entryName.get() + "\' WHERE r_id=" + resId
         banco.dml(vquery)
     except:
-        messagebox.showinfo(title = "ERRO", message = "Erro ao atualizar")
+        messagebox.showinfo(title = "ERROR", message = "Error loading")
         return
-    entryNome.delete(0, END)
-def Fone():
-    if entryFone.get()=="":
-        messagebox.showinfo(title = "ERRO", message = "Digite o telefone para atualizar")
+    entryName.delete(0, END)
+def EarNo():
+    if entryEarNo.get()=="":
+        messagebox.showinfo(title = "ERROR", message = "Error loading ear number")
         return
     try:
         resId = Id()
         if resId == 0:
             return
-        vquery = "UPDATE tb_nomes SET fone=" + "\'" + entryFone.get() + "\' WHERE id=" + resId
+        vquery = "UPDATE rabbits SET ear_no=" + "\'" + entryEarNo.get() + "\' WHERE r_id=" + resId
         banco.dml(vquery)
     except:
-        messagebox.showinfo(title = "ERRO", message = "Erro ao atualizar")
+        messagebox.showinfo(title = "ERROR", message = "Error updating ear number")
         return
-    entryFone.delete(0, END)
-def Email1():
-    if entryEmail1.get()=="":
-        messagebox.showinfo(title = "ERRO", message = "Digite o email1 para atualizar")
+    entryEarNo.delete(0, END)
+def Variety():
+    if entryVariety.get()=="":
+        messagebox.showinfo(title = "ERROR", message = "Error loading variety")
         return
     try:
         resId = Id()
         if resId == 0:
             return
-        vquery = "UPDATE tb_nomes SET email1=" + "\'" + entryEmail1.get() + "\' WHERE id=" + resId
+        vquery = "UPDATE rabbits SET variety=" + "\'" + entryVariety.get() + "\' WHERE r_id=" + resId
         banco.dml(vquery)
     except:
-        messagebox.showinfo(title = "ERRO", message = "Erro ao atualizar")
+        messagebox.showinfo(title = "ERROR", message = "Error updating")
         return
-    entryEmail1.delete(0, END)
-def Email2():
-    if entryEmail2.get()=="":
-        messagebox.showinfo(title = "ERRO", message = "Digite o email2 para atualizar")
+    entryVariety.delete(0, END)
+def DOB():
+    if entryDOB.get()=="":
+        messagebox.showinfo(title = "ERROR", message = "Error loading dob")
         return
     try:
         resId = Id()
         if resId == 0:
             return
-        vquery = "UPDATE tb_nomes SET email2 =" + "\'" + entryEmail2.get() + "\' WHERE id=" + resId
+        vquery = "UPDATE rabbits SET dob =" + "\'" + entryDOB.get() + "\' WHERE r_id=" + resId
         banco.dml(vquery)
     except:
-        messagebox.showinfo(title = "ERRO", message = "Erro ao atualizar")
+        messagebox.showinfo(title = "ERROR", message = "Error updating")
         return
-    entryEmail2.delete(0, END)
+    entryDOB.delete(0, END)
 app1 = Tk()
-app1.title("Atualizar")
+app1.title("Update")
 app1.geometry("240x270")
-quadroAtualizar = LabelFrame(app1, text = "Atualizar")
-quadroAtualizar.pack(fill = "both", expand = "yes", padx = 10, pady = 5)
-entryNome = Entry(quadroAtualizar)
-entryFone = Entry(quadroAtualizar)
-entryEmail1 = Entry(quadroAtualizar)
-entryEmail2 = Entry(quadroAtualizar)
-entryId = Entry(quadroAtualizar)
-Label(quadroAtualizar, text = "Digite o Id abaixo:", background = "#dde", foreground = "#009", anchor = W).place(x = 5, y = 180)
-entryNome.place(x = 5,y = 5)
-entryFone.place(x = 5,y = 50)
-entryEmail1.place(x = 5,y = 105)
-entryEmail2.place(x = 5,y = 155)
+quadUpdate = LabelFrame(app1, text = "Update")
+quadUpdate.pack(fill = "both", expand = "yes", padx = 10, pady = 5)
+entryName = Entry(quadUpdate)
+entryEarNo = Entry(quadUpdate)
+entryVariety = Entry(quadUpdate)
+entryDOB = Entry(quadUpdate)
+entryId = Entry(quadUpdate)
+Label(quadUpdate, text = "Digite o Id abaixo:", background = "#dde", foreground = "#009", anchor = W).place(x = 5, y = 180)
+entryName.place(x = 5,y = 5)
+entryEarNo.place(x = 5,y = 50)
+entryVariety.place(x = 5,y = 105)
+entryDOB.place(x = 5,y = 155)
 entryId.place(x = 5, y = 215)
-btn_Nome = Button(quadroAtualizar, text = "Nome", command = Nome)
-btn_Fone = Button(quadroAtualizar, text  = "Fone", command = Fone)
-btn_Email1 = Button(quadroAtualizar, text = "Email1", command = Email1)
-btn_Email2 = Button(quadroAtualizar, text = "Email2", command = Email2)
-btn_Nome.place(x = 135, y = 0)
-btn_Fone.place(x = 135, y = 50)
-btn_Email1.place(x = 135, y = 100)
-btn_Email2.place(x = 135, y = 150)
+btn_Name = Button(quadUpdate, text = "Name", command = Name)
+btn_EarNo = Button(quadUpdate, text  = "EarNo", command = EarNo)
+btn_Variety = Button(quadUpdate, text = "Variety", command = Variety)
+btn_DOB = Button(quadUpdate, text = "DOB", command = DOB)
+btn_Name.place(x = 135, y = 0)
+btn_EarNo.place(x = 135, y = 50)
+btn_Variety.place(x = 135, y = 100)
+btn_DOB.place(x = 135, y = 150)
 app1.mainloop()
