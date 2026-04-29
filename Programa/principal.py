@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox 
 import os
 import banco
+import addpedigree
 
 #set variables
 pastaApp = os.path.dirname(__file__) #used for handling files
@@ -139,6 +140,13 @@ def refresh_headers():
         tv.column(eachcol, minwidth = 0, width = 100)
         tv.heading(eachcol, text = headers[eachcol])
 
+def get_selected_item():
+    curItem = tv.focus()
+    if len(curItem) > 0:
+        return tv.item(curItem)["values"][0]
+    else:
+        return 0
+
 
 #Set up heading
 app = Tk()
@@ -211,6 +219,10 @@ btn_insert = Button(quadInsert, text = "Insert", command = insert)
 btn_delete = Button(quadInsert, text  = "Delete", command = delete)
 btn_delete.place(x = 388, y = -5)
 btn_insert.pack(side = "left", padx = 10)
+btn_addnew = Button(quadInsert, text = "Add Rabbit", command = addpedigree.add_pedigree)
+btn_addnew.place(x = 50, y = 50)
+btn_test = Button(quadInsert, text = "Modify Rabbit", command = lambda: addpedigree.add_pedigree(get_selected_item()))
+btn_test.place(x = 150, y = 50)
 
 #Set up Search Form
 quadSearch = LabelFrame(app, text = "Search")
@@ -223,4 +235,5 @@ btn_search = Button(quadSearch, text = "Search", command = search)
 btn_search.pack(side = "left", padx = 10)
 btn_all = Button(quadSearch, text = "Show All", command = populate)
 btn_all.pack(side = "left", padx = 10)
+
 app.mainloop()
