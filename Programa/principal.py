@@ -3,37 +3,63 @@ from tkinter import ttk
 from tkinter import messagebox 
 import os
 import banco
-pastaApp = os.path.dirname(__file__) 
-#def atualizarApp():
-#    app.update()
-# def popular():
-#     tv.delete(*tv.get_children())
-#     vquery = "SELECT * FROM tb_nomes order by ID"
-#     linhas = banco.dql(vquery)
-#     for i in linhas:
-#         tv.insert("", "end", values = i)
+
+#set variables
+pastaApp = os.path.dirname(__file__) #used for handling files
+datatype = "rabbits" #used to switch between breeder and rabbit views
+viewstatus = 1 #used to toggle between viewing different statuses
+#used to store grid values for rabbits vs breeders
+columns_breeders = {
+    "b_id": "ID",
+    "name": "Name",
+    "rabbitry": "Rabbitry",
+    "address": "Address"
+}
+columns_rabbits = {
+    "r_id": "ID",
+    "name": "Name",
+    "earno": "Ear #",
+    "variety": "Variety",
+    "dob": "DOB"
+}
+
+#handle switching between rabbit view and breeder view on grid
+def switchtobreeders():
+    global datatype
+    datatype = "breeders"
+    refresh_headers()
+    populate()
+    quadroGrid.configure(text=datatype.capitalize())
+def switchtorabbits():
+    global datatype
+    datatype = "rabbits"
+    refresh_headers()
+    populate()
+    quadroGrid.configure(text=datatype.capitalize())
+
+#populat grid
 def populate():
+    global datatype
+    global columns_breeders
+    global columns_rabbits
+    selectlist = ''
     tv.delete(*tv.get_children())
-    vquery = "SELECT * FROM rabbits WHERE status = 1 order by r_id ASC"
+    if datatype == "rabbits":
+        for eachcol in list(columns_rabbits.keys()):
+            if selectlist != '':
+                selectlist = selectlist + ', '
+            selectlist = selectlist + eachcol
+        vquery = "SELECT " + selectlist + " FROM rabbits WHERE status = 1 order by r_id ASC"
+    else: 
+        for eachcol in list(columns_breeders.keys()):
+            if selectlist != '':
+                selectlist = selectlist + ', '
+            selectlist = selectlist + eachcol
+        vquery = "SELECT " + selectlist + " FROM breeders WHERE status = 1 order by b_id ASC"
     rows = banco.dql(vquery)
     for i in rows:
         tv.insert("", "end", values = i)
-# def inserir():
-#     if vname.get()=="" or vearno.get()=="" or vemail1.get()=="" or vemail2.get() == "":
-#         messagebox.showinfo(title = "ERRO", message = "Digite todos os dados")
-#         return
-#     try:
-#         vquery = "INSERT INTO tb_nomes(nome, fone, email1, email2)VALUES('" + vname.get() + "','" + vearno.get() + "','" + vemail1.get() + "','" + vemail2.get() + "')"
-#         banco.dml(vquery)
-#     except:
-#         messagebox.showinfo(title = "ERRO", message = "Erro ao inserir")
-#         return
-#     popular()
-#     vname.delete(0, END)
-#     vearno.delete(0, END)
-#     vemail1.delete(0, END)
-#     vemail2.delete(0, END)
-#     vname.focus()
+
 def insert():
     if vname.get()=="" or vearno.get()=="" or vvariety.get()=="" or vdob.get() == "":
         messagebox.showinfo(title = "ERROR", message = "Missing Data")
@@ -89,24 +115,76 @@ def search():
     vnamesearch.delete(0, END)
 def atualizar():
     exec(open(pastaApp+"\\atualizar.py").read())
+
+def get_headers():
+    global datatype
+    global columns_rabbits
+    global columns_breeders
+
+    #Set up columns
+    if datatype == "rabbits":
+        headers = columns_rabbits
+    else:
+        headers = columns_breeders
+    return headers
+
+def refresh_headers():
+    tv.delete(*tv.get_children())
+    headers = get_headers()
+    columns = list(headers.keys())
+
+    tv["columns"] = columns
+    
+    for eachcol in columns:
+        tv.column(eachcol, minwidth = 0, width = 100)
+        tv.heading(eachcol, text = headers[eachcol])
+
+
+#Set up heading
 app = Tk()
 app.title("Open Rabbit Pedigree System")
 app.geometry("600x500")
-quadroGrid = LabelFrame(app, text = "Content")
+
+#Set up menu bar
+app.option_add('*tearOff', FALSE)
+#toplevel = Toplevel(app)
+m = Menu(app)
+m_options = Menu(m)
+m_data = Menu(m)
+m.add_cascade(menu=m_options, label = "Settings")
+m_options.add_command(label="test1")
+m_options.add_command(label="test2")
+m.add_cascade(menu=m_data, label = "Data")
+m_data.add_command(label="View Rabbits", command=switchtorabbits)
+m_data.add_command(label="View Breeders", command=switchtobreeders)
+app['menu'] = m
+
+#Set up Grid
+quadroGrid = LabelFrame(app, text = datatype.capitalize())
 quadroGrid.pack(fill = "both", expand = "yes", padx = 10, pady = 10)
-tv = ttk.Treeview(quadroGrid, columns = ('r_id', 'name',"earno", "variety",'dob'), show = 'headings')
-tv.column('r_id', minwidth = 0, width = 30)
-tv.column('name', minwidth = 0, width = 150)
-tv.column('earno', minwidth = 0, width = 100)
-tv.column('variety', minwidth = 0, width = 100)
-tv.column('dob', minwidth = 0, width = 100)
-tv.heading('r_id', text = 'ID')
-tv.heading('name', text = 'NAME')
-tv.heading('earno', text = 'EARNO')
-tv.heading('variety', text = 'VARIETY')
-tv.heading('dob', text = 'DOB')
+
+headers = get_headers()
+columns = list(headers.keys())
+tv = ttk.Treeview(quadroGrid, columns = columns, show = 'headings')
+
+refresh_headers()
+
+# tv = ttk.Treeview(quadroGrid, columns = ('r_id', 'name',"earno", "variety",'dob'), show = 'headings')
+# tv.column('r_id', minwidth = 0, width = 30)
+# tv.column('name', minwidth = 0, width = 150)
+# tv.column('earno', minwidth = 0, width = 100)
+# tv.column('variety', minwidth = 0, width = 100)
+# tv.column('dob', minwidth = 0, width = 100)
+# tv.heading('r_id', text = 'ID')
+# tv.heading('name', text = 'NAME')
+# tv.heading('earno', text = 'EARNO')
+# tv.heading('variety', text = 'VARIETY')
+# tv.heading('dob', text = 'DOB')
+
 tv.pack()
 populate()
+
+#Set up Insert Form
 quadInsert = LabelFrame(app, text = "Insert New Content")
 quadInsert.pack(fill = "both", expand = "yes", padx = 10, pady = 5)
 lbname = Label(quadInsert, text = "Name")
@@ -133,6 +211,8 @@ btn_insert = Button(quadInsert, text = "Insert", command = insert)
 btn_delete = Button(quadInsert, text  = "Delete", command = delete)
 btn_delete.place(x = 388, y = -5)
 btn_insert.pack(side = "left", padx = 10)
+
+#Set up Search Form
 quadSearch = LabelFrame(app, text = "Search")
 quadSearch.pack(fill = "both", expand = "yes", padx= 10, pady = 10)
 lbid =Label(quadSearch, text = "Name")
