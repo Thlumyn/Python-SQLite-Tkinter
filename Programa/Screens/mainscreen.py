@@ -39,23 +39,53 @@ class MainScreen(Screen):
         self.refresh_headers()
         self.populate()
         self.quadroGrid.configure(text=self.datatype.capitalize())
+    def switchtoarchived(self):
+        self.datatype = "archived"
+        self.refresh_headers()
+        self.populate()
+        self.quadroGrid.configure(text=self.datatype.capitalize())
+
+    def delete(self):
+        try:
+            vid = 1
+            itemSelected = self.tv.selection()[0]
+            values = self.tv.item(itemSelected, "values")
+            vid = values[0]
+            #vquery = "DELETE FROM rabbits WHERE r_id = " + vid
+            if self.datatype == "rabbits":
+                vquery = "UPDATE rabbits SET status = 0 WHERE r_id = " + vid
+            else:
+                vquery = "UPDATE rabbits SET status = -1 WHERE r_id = " + vid
+            banco.dml(vquery)
+            self.tv.delete(itemSelected)
+        except:
+            messagebox.showinfo(title = "ERROR", message = "Error deleting item")
 
     #populat grid
     def populate(self):
         selectlist = ''
         self.tv.delete(*self.tv.get_children())
         if self.datatype == "rabbits":
+            self.delete1text = "Remove Rabbit"
             for eachcol in list(self.columns_rabbits.keys()):
                 if selectlist != '':
                     selectlist = selectlist + ', '
                 selectlist = selectlist + eachcol
             vquery = "SELECT " + selectlist + " FROM rabbits WHERE status = 1 order by r_id ASC"
-        else: 
+        elif self.datatype == "breeders": 
+            self.delete1text = "Remove Rabbit"
             for eachcol in list(self.columns_breeders.keys()):
                 if selectlist != '':
                     selectlist = selectlist + ', '
                 selectlist = selectlist + eachcol
             vquery = "SELECT " + selectlist + " FROM breeders WHERE status = 1 order by b_id ASC"
+        else:
+            self.delete1text = "Delete Rabbit"
+            for eachcol in list(self.columns_rabbits.keys()):
+                if selectlist != '':
+                    selectlist = selectlist + ', '
+                selectlist = selectlist + eachcol
+            vquery = "SELECT " + selectlist + " FROM rabbits WHERE status = 0 order by r_id ASC"
         rows = banco.dql(vquery)
         for i in rows:
             self.tv.insert("", "end", values = i)
@@ -71,7 +101,7 @@ class MainScreen(Screen):
 
     def get_headers(self):
         #Set up columns
-        if self.datatype == "rabbits":
+        if self.datatype == "rabbits" or self.datatype == "archived":
             headers = self.columns_rabbits
         else:
             headers = self.columns_breeders
@@ -94,6 +124,21 @@ class MainScreen(Screen):
             return self.tv.item(curItem)["values"][0]
         else:
             return 0
+        
+    def export_pdf(self):
+        return 
+    
+    def move_to_rabbitry(self):
+        try:
+            vid = 1
+            itemSelected = self.tv.selection()[0]
+            values = self.tv.item(itemSelected, "values")
+            vid = values[0]
+            vquery = "UPDATE rabbits SET status = 1 WHERE r_id = " + vid
+            banco.dml(vquery)
+            self.tv.delete(itemSelected)
+        except:
+            messagebox.showinfo(title = "ERROR", message = "Error returning item")
 
     def open_main_screen(self):
 
@@ -114,8 +159,9 @@ class MainScreen(Screen):
         m_options.add_command(label="test1")
         m_options.add_command(label="test2")
         m.add_cascade(menu=m_data, label = "Data")
-        m_data.add_command(label="View Rabbits", command=self.switchtorabbits)
+        m_data.add_command(label="View Own Rabbits", command=self.switchtorabbits)
         m_data.add_command(label="View Breeders", command=self.switchtobreeders)
+        m_data.add_command(label="View Outside Rabbits", command=self.switchtoarchived)
         app['menu'] = m
 
         #Set up Grid
@@ -141,6 +187,15 @@ class MainScreen(Screen):
         btn_modify.place(x = 150, y = 0)
         btn_link = Button(quadInsert, text = "Edit Lineage", command = lambda: self.linkpedigree.open_link_pedigree_screen(self.get_selected_item()))
         btn_link.place(x = 250, y = 0)
+        btn_delete = Button(quadInsert, text = self.delete1text, command = self.delete)
+        btn_delete.place(x = 350, y = 0)
+
+        if self.datatype == "rabbits":
+            btn_return = Button(quadInsert, text = "Move to Rabbitry", command = self.move_to_rabbitry)
+            btn_return.place(x = 450, y = 0)
+        elif self.datatype == "archived":
+            btn_generate = Button(quadInsert, text = "Export PDF", command = self.export_pdf)
+            btn_generate.place(x = 450, y = 0)
 
         #Set up Search Form
         quadSearch = LabelFrame(app, text = "Search")

@@ -86,7 +86,7 @@ class LinkPedigreeScreen(Screen):
 
     def rabbits_dropdown(self):
         dropdown_list = ['Unknown', 'New Rabbit']
-        vquery = "SELECT r_id, name FROM rabbits ORDER BY r_id ASC"
+        vquery = "SELECT r_id, name FROM rabbits WHERE status = 0 or status = 1 ORDER BY r_id ASC"
         rows = banco.dql(vquery)
         for eachrow in rows:
             dropdown_list.append(str(eachrow[0]) + ': ' + eachrow[1])
