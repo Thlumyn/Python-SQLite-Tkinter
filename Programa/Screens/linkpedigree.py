@@ -52,10 +52,17 @@ class LinkPedigreeScreen(Screen):
             dropdown_list.append(str(eachrow[0]) + ': ' + eachrow[1])
         return dropdown_list
     
-    def display_dropdown(self, x, y):
-        siredropdown = ttk.Combobox(self.app1, values = self.rabbits_dropdown())
-        siredropdown.set("Select Rabbit")
-        siredropdown.place(x = x, y = y)
+    def display_dropdown(self, rabbitkey):
+        rabbitobject = self.rabbits_dict[rabbitkey]
+        rabbitobject.rabbitdropdown = ttk.Combobox(self.app1, values = self.rabbits_dropdown())
+        rabbitobject.rabbitdropdown.set("Select Rabbit")
+        rabbitobject.rabbitdropdown.place(x = rabbitobject.x, y = rabbitobject.y + 20)
+        rabbitobject.btn_modify.config(text="Save", command = lambda rabbitkey=rabbitkey: self.close_dropdown(rabbitkey))
+
+    def close_dropdown(self, rabbitkey):
+        rabbitobject = self.rabbits_dict[rabbitkey]
+        rabbitobject.rabbitdropdown.place_forget()
+        rabbitobject.btn_modify.config(text = "Edit", command = lambda rabbitkey=rabbitkey: self.display_dropdown(rabbitkey))
 
     def open_link_pedigree_screen(self, id=0):
         if id == 0 or int(id) != id:
@@ -92,8 +99,8 @@ class LinkPedigreeScreen(Screen):
         for rabbitkey, rabbitvalue in self.rabbits_dict.items():
             self.rabbits_dict[rabbitkey].label =Label(quadUpdate, text = rabbitvalue.name)
             self.rabbits_dict[rabbitkey].label.place(x = rabbitvalue.x, y = rabbitvalue.y)
-            self.rabbits_dict[rabbitkey].btn_modify = Button(quadUpdate, text = "Edit", command = lambda: self.display_dropdown(rabbitvalue.x, rabbitvalue.y+10))
-            self.rabbits_dict[rabbitkey].btn_modify.place(x = rabbitvalue.x, y = rabbitvalue.y + 30)
+            self.rabbits_dict[rabbitkey].btn_modify = Button(quadUpdate, text = "Edit", command = lambda rabbitkey=rabbitkey: self.display_dropdown(rabbitkey))
+            self.rabbits_dict[rabbitkey].btn_modify.place(x = rabbitvalue.x, y = rabbitvalue.y + 20)
 
         # rabbitlb =Label(quadUpdate, text = rabbit.name)
         # rabbitlb.place(x = 5, y = 180)
@@ -138,3 +145,5 @@ class LinkPedigreeScreen(Screen):
         # ddsirelb.place(x = 210, y = 285)
         # dddamlb =Label(quadUpdate, text = dddam.name)
         # dddamlb.place(x = 210, y = 330)
+
+        self.app1.mainloop()
