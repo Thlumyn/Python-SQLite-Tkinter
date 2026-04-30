@@ -4,6 +4,7 @@ from tkinter import messagebox
 import banco
 from Screens.screen import Screen
 from Screens.addpedigree import AddRabbitScreen
+from Screens.linkpedigree import LinkPedigreeScreen
 
 class MainScreen(Screen):
 
@@ -95,6 +96,7 @@ class MainScreen(Screen):
     def open_main_screen(self):
 
         self.addpedigree = AddRabbitScreen(self)
+        self.linkpedigree = LinkPedigreeScreen(self)
         #Set up heading
         app = Tk()
         app.title("Open Rabbit Pedigree System")
@@ -133,8 +135,10 @@ class MainScreen(Screen):
 
         btn_addnew = Button(quadInsert, text = "Add Rabbit", command = self.addpedigree.add_pedigree)
         btn_addnew.place(x = 50, y = 0)
-        btn_test = Button(quadInsert, text = "Modify Rabbit", command = lambda: self.addpedigree.add_pedigree(self.get_selected_item()))
-        btn_test.place(x = 150, y = 0)
+        btn_modify = Button(quadInsert, text = "Modify Rabbit", command = lambda: self.addpedigree.add_pedigree(self.get_selected_item()))
+        btn_modify.place(x = 150, y = 0)
+        btn_link = Button(quadInsert, text = "Edit Lineage", command = lambda: self.linkpedigree.open_link_pedigree_screen(self.get_selected_item()))
+        btn_link.place(x = 250, y = 0)
 
         #Set up Search Form
         quadSearch = LabelFrame(app, text = "Search")
