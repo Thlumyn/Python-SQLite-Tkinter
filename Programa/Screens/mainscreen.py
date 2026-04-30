@@ -25,6 +25,8 @@ class MainScreen(Screen):
             "variety": "Variety",
             "dob": "DOB"
         }
+        self.addrabbitopen = 0
+        self.linkpedigreeopen = 0
 
     #handle switching between rabbit view and breeder view on grid
     def switchtobreeders(self):

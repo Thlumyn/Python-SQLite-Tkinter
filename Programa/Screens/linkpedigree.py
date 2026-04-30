@@ -78,6 +78,7 @@ class LinkPedigreeScreen(Screen):
         
     def __init__(self, mainscreen):
         self.mainscreen = mainscreen
+        self.id = 0
 
     def on_closing(self):
         self.mainscreen.populate()
@@ -94,7 +95,7 @@ class LinkPedigreeScreen(Screen):
     def display_dropdown(self, rabbitkey):
         rabbitobject = self.rabbits_dict[rabbitkey]
         rabbitobject.rabbitdropdown = ttk.Combobox(self.app1, values = self.rabbits_dropdown())
-        rabbitobject.rabbitdropdown.set("Select Rabbit")
+        rabbitobject.rabbitdropdown.set("New Rabbit")
         rabbitobject.rabbitdropdown.place(x = rabbitobject.x, y = rabbitobject.y + 20)
         rabbitobject.btn_modify.config(text="Save", command = lambda rabbitkey=rabbitkey: self.save_dropdown(rabbitkey))
 
@@ -104,18 +105,40 @@ class LinkPedigreeScreen(Screen):
         if newrabbitid == 'Unknown':
             newrabbitid = 0
         elif newrabbitid == 'New Rabbit':
-            newrabbitid = 0
+            self.mainscreen.addpedigree.add_pedigree(0, 0, rabbitkey)
+            self.app1.wait_window(self.mainscreen.addpedigree.app1)
         else: 
             newrabbitid = newrabbitid.split(':')[0]
-        rabbitobject.assign_id(newrabbitid)
         rabbitobject.rabbitdropdown.place_forget()
         rabbitobject.label.config(text='')
         rabbitobject.label.place_forget()
         rabbitobject.btn_modify.place_forget()
+        rabbitobject.assign_id(newrabbitid)
         #rabbitobject.btn_modify.config(text = "Edit", command = lambda rabbitkey=rabbitkey: self.display_dropdown(rabbitkey))
         self.refresh_pedigree_screen(self.rabbits_dict['rabbit'].id)
 
-    def refresh_pedigree_screen(self, id):
+    def add_new_finalized(self, rabbitkey):
+        vquery2 = "SELECT r_id FROM rabbits ORDER BY r_id DESC LIMIT 1"
+        rows = banco.dql(vquery2)
+        nextid = int(rows[0][0])
+        newrabbitid = nextid
+        rabbitobject = self.rabbits_dict[rabbitkey]
+        rabbitobject.rabbitdropdown.place_forget()
+        rabbitobject.label.config(text='')
+        rabbitobject.label.place_forget()
+        rabbitobject.btn_modify.place_forget()
+        rabbitobject.assign_id(newrabbitid)
+        #rabbitobject.btn_modify.config(text = "Edit", command = lambda rabbitkey=rabbitkey: self.display_dropdown(rabbitkey))
+        self.refresh_pedigree_screen(self.rabbits_dict['rabbit'].id)
+        
+
+    def refresh_pedigree_screen(self, id=0):
+
+        if id == 0:
+            id = self.id
+        else:
+            self.id = id
+
         self.rabbits_dict = {}
 
         for label in self.labelslist:
@@ -151,10 +174,16 @@ class LinkPedigreeScreen(Screen):
             self.rabbits_dict[rabbitkey].btn_modify = Button(self.quadUpdate, text = "Edit", command = lambda rabbitkey=rabbitkey: self.display_dropdown(rabbitkey))
             self.rabbits_dict[rabbitkey].btn_modify.place(x = rabbitvalue.x, y = rabbitvalue.y + 20)
 
+    def on_closing(self):
+        self.mainscreen.addpedigreeopen = 0
+        self.app1.destroy()
+
     def open_link_pedigree_screen(self, id=0):
         if id == 0 or int(id) != id:
             messagebox.showinfo(title = "ERROR", message = "Unable to load rabbit")
             return
+        
+        self.mainscreen.linkpedigreeopen = 1
 
         self.app1 = Toplevel()
         self.app1.title("Pedigree Linkage")
@@ -210,4 +239,5 @@ class LinkPedigreeScreen(Screen):
         # dddamlb =Label(quadUpdate, text = dddam.name)
         # dddamlb.place(x = 210, y = 330)
 
+        self.app1.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.app1.mainloop()

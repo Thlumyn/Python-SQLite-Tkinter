@@ -21,6 +21,8 @@ class AddRabbitScreen(Screen):
         }
         self.entrylist = list(self.columns_new_rabbits.keys())
         self.entry = {}
+        self.status = 1
+        self.rabbitkey = 'rabbit'
 
 
     def update_rabbit(self, id = 0):
@@ -44,7 +46,7 @@ class AddRabbitScreen(Screen):
                 if newlist != '':
                     newlist = newlist + "', '"
                 newlist = newlist + rabbitdata[eachcol]
-            sqlstring = 'INSERT into rabbits (' + selectlist + ", status) values ('" + newlist + "', '1')"
+            sqlstring = 'INSERT into rabbits (' + selectlist + ", status) values ('" + newlist + "', '" + str(self.status) + "')"
         #print (sqlstring)
         try:
             banco.dml(sqlstring)
@@ -54,11 +56,18 @@ class AddRabbitScreen(Screen):
 
     def on_closing(self):
         self.mainscreen.populate()
+        self.mainscreen.addrabbitopen = 0
+        if self.mainscreen.linkpedigreeopen ==1:
+            self.mainscreen.linkpedigree.add_new_finalized(self.rabbitkey)
+            #self.mainscreen.linkpedigree.refresh_pedigree_screen()
         self.app1.destroy()
 
 
-    def add_pedigree(self, id=0):
+    def add_pedigree(self, id=0, status = 1, rabbitkey = 'rabbit'):
         update = False
+        self.mainscreen.addrabbitopen = 1
+        self.status = status
+        self.rabbitkey = rabbitkey
         if id != 0 and int(id) == id:
             update = True
             selectlist = ''
