@@ -115,16 +115,16 @@ class MainScreen(Screen):
         app['menu'] = m
 
         #Set up Grid
-        quadroGrid = LabelFrame(app, text = self.datatype.capitalize())
-        quadroGrid.pack(fill = "both", expand = "yes", padx = 10, pady = 10)
+        self.quadroGrid = LabelFrame(app, text = self.datatype.capitalize())
+        self.quadroGrid.pack(fill = "both", expand = "yes", padx = 10, pady = 10)
 
         headers = self.get_headers()
         columns = list(headers.keys())
-        tv = ttk.Treeview(quadroGrid, columns = columns, show = 'headings')
+        self.tv = ttk.Treeview(self.quadroGrid, columns = columns, show = 'headings')
 
         self.refresh_headers()
 
-        tv.pack()
+        self.tv.pack()
         self.populate()
 
         #Set up Insert Form
@@ -141,8 +141,8 @@ class MainScreen(Screen):
         quadSearch.pack(fill = "both", expand = "yes", padx= 10, pady = 10)
         lbid =Label(quadSearch, text = "Name")
         lbid.pack(side = "left")
-        vnamesearch = Entry(quadSearch)
-        vnamesearch.pack(side = "left", padx = 10)
+        self.vnamesearch = Entry(quadSearch)
+        self.vnamesearch.pack(side = "left", padx = 10)
         btn_search = Button(quadSearch, text = "Search", command = self.search)
         btn_search.pack(side = "left", padx = 10)
         btn_all = Button(quadSearch, text = "Show All", command = self.populate)

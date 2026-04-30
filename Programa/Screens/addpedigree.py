@@ -7,7 +7,7 @@ from Screens.screen import Screen
 class AddRabbitScreen(Screen):
         
     def __init__(self):
-        columns_new_rabbits = {
+        self.columns_new_rabbits = {
             "name": "Name",
             "earno": "Ear #",
             "breed": "Breed",
@@ -18,8 +18,8 @@ class AddRabbitScreen(Screen):
             "legs": "Legs",
             "dob": "DOB"
         }
-        entrylist = list(columns_new_rabbits.keys())
-        entry = {}
+        self.entrylist = list(self.columns_new_rabbits.keys())
+        self.entry = {}
 
 
     def update_rabbit(self, app1, id = 0):
