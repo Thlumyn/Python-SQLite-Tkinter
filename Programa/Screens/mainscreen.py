@@ -59,7 +59,7 @@ class MainScreen(Screen):
 
     def search(self):
         self.tv.delete(*self.tv.get_children())
-        vquery = "SELECT * FROM rabbits WHERE name LIKE '%" + self.vnamesearch.get() + "%'"
+        vquery = "SELECT * FROM rabbits WHERE status = 1 AND name LIKE '%" + self.vnamesearch.get() + "%'"
         lines = banco.dql(vquery)
         for i in lines:
             self.tv.insert("", "end", values = i)
