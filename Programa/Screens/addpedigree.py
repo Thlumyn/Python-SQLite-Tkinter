@@ -6,7 +6,8 @@ from Screens.screen import Screen
 
 class AddRabbitScreen(Screen):
         
-    def __init__(self):
+    def __init__(self, mainscreen):
+        self.mainscreen = mainscreen
         self.columns_new_rabbits = {
             "name": "Name",
             "earno": "Ear #",
@@ -22,7 +23,7 @@ class AddRabbitScreen(Screen):
         self.entry = {}
 
 
-    def update_rabbit(self, app1, id = 0):
+    def update_rabbit(self, id = 0):
         rabbitdata = {}
         for entrycolumn in self.entrylist:
             rabbitdata[entrycolumn] = self.entry[entrycolumn].get()
@@ -47,9 +48,13 @@ class AddRabbitScreen(Screen):
         #print (sqlstring)
         try:
             banco.dml(sqlstring)
-            app1.destroy()
+            self.on_closing()
         except:
             messagebox.showinfo(title = "ERROR", message = "Error saving data")
+
+    def on_closing(self):
+        self.mainscreen.populate()
+        self.app1.destroy()
 
 
     def add_pedigree(self, id=0):
@@ -74,10 +79,10 @@ class AddRabbitScreen(Screen):
 
 
 
-        app1 = Toplevel()
-        app1.title("Modify Rabbit")
-        app1.geometry("240x380")
-        quadUpdate = LabelFrame(app1, text = "Modify Rabbit")
+        self.app1 = Toplevel()
+        self.app1.title("Modify Rabbit")
+        self.app1.geometry("240x380")
+        quadUpdate = LabelFrame(self.app1, text = "Modify Rabbit")
         quadUpdate.pack(fill = "both", expand = "yes", padx = 10, pady = 5)
 
         placementx = 5
@@ -101,9 +106,10 @@ class AddRabbitScreen(Screen):
             btn_text = "Update"
         else:
             btn_text = "Add New"
-        btn_Save = Button(quadUpdate, text = btn_text, command = lambda: self.update_rabbit(app1, id))
+        btn_Save = Button(quadUpdate, text = btn_text, command = lambda: self.update_rabbit(id))
         btn_Save.place(x = placementx, y = placementy)
-        btn_Exit = Button(quadUpdate, text = "Cancel", command = app1.destroy)
+        btn_Exit = Button(quadUpdate, text = "Cancel", command = self.on_closing)
         btn_Exit.place(x = placementx + 60, y = placementy)
 
-        app1.mainloop()
+        self.app1.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.app1.mainloop()

@@ -94,7 +94,7 @@ class MainScreen(Screen):
 
     def open_main_screen(self):
 
-        addpedigree = AddRabbitScreen()
+        self.addpedigree = AddRabbitScreen(self)
         #Set up heading
         app = Tk()
         app.title("Open Rabbit Pedigree System")
@@ -131,9 +131,9 @@ class MainScreen(Screen):
         quadInsert = LabelFrame(app, text = "Insert New Content")
         quadInsert.pack(fill = "both", expand = "yes", padx = 10, pady = 5)
 
-        btn_addnew = Button(quadInsert, text = "Add Rabbit", command = addpedigree.add_pedigree)
+        btn_addnew = Button(quadInsert, text = "Add Rabbit", command = self.addpedigree.add_pedigree)
         btn_addnew.place(x = 50, y = 0)
-        btn_test = Button(quadInsert, text = "Modify Rabbit", command = lambda: addpedigree.add_pedigree(self.get_selected_item()))
+        btn_test = Button(quadInsert, text = "Modify Rabbit", command = lambda: self.addpedigree.add_pedigree(self.get_selected_item()))
         btn_test.place(x = 150, y = 0)
 
         #Set up Search Form
